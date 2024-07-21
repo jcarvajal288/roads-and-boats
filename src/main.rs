@@ -21,12 +21,11 @@ fn setup(mut commands: Commands, mut clear_color: ResMut<ClearColor>, asset_serv
 }
 
 fn draw_map(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let hex_map: HexMap = create_hex_map(5, 5);
+    let hex_map: HexMap = create_hex_map(-3, 3, -2, 2);
     let clear001: Handle<Image> = asset_server.load("Clear/Clear001.png");
-    for q in 0..(hex_map.width) {
-        for r in 0..(hex_map.height) {
-            draw_hex(&mut commands, clear001.clone(), create_axial([q, r]));
-        }
+    for hex in hex_map.map {
+        let cubic = hex.0;
+        draw_hex(&mut commands, clear001.clone(), create_axial([cubic.q(), cubic.r()]));
     }
 }
 

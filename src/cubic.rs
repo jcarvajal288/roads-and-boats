@@ -18,7 +18,8 @@ impl Cubic {
         return self.coords[2];
     }
 
-    pub fn to_pixel(&self, hex_size: f32) -> Vec2 {
+    pub fn to_pixel(&self, hs: f32) -> Vec2 {
+        let hex_size = hs - 1.; // avoid 1 pixel space between hexes
         let q = f32::from(self.q());
         let r = f32::from(self.r());
         let x: f32 = hex_size * (3./2. * q);
