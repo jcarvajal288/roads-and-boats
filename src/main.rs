@@ -1,4 +1,9 @@
+mod cubic;
+mod hex_map;
+
 use bevy::prelude::*;
+use crate::cubic::{create_axial, create_cubic, Cubic};
+use crate::hex_map::{create_hex_map, HexMap};
 
 fn main() {
     App::new()
@@ -7,24 +12,26 @@ fn main() {
         .run();
 }
 
-struct AxialCoordinate {
-    q: f32,
-    r: f32
-}
-
 const HEX_SIZE: f32 = 64.;
 
 fn setup(mut commands: Commands, mut clear_color: ResMut<ClearColor>, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
     clear_color.0 = Color::hsl(210., 1., 0.8);
-    let clear001: Handle<Image> = asset_server.load("Clear/Clear001.png");
-    draw_hex(&mut commands, clear001.clone(), AxialCoordinate { q: 0., r: 0. });
-    draw_hex(&mut commands, clear001.clone(), AxialCoordinate { q: 0., r: 1. });
-    draw_hex(&mut commands, clear001.clone(), AxialCoordinate { q: 1., r: 1. });
+    draw_map(commands, asset_server);
 }
 
-fn draw_hex(commands: &mut Commands, hex_texture: Handle<Image>, axial_position: AxialCoordinate) {
-    let pixel_position: Vec2 = axial_to_pixel(&axial_position);
+fn draw_map(mut commands: Commands, asset_server: Res<AssetServer>) {
+    let hex_map: HexMap = create_hex_map(5, 5);
+    let clear001: Handle<Image> = asset_server.load("Clear/Clear001.png");
+    for q in 0..(hex_map.width) {
+        for r in 0..(hex_map.height) {
+            draw_hex(&mut commands, clear001.clone(), create_axial([q, r]));
+        }
+    }
+}
+
+fn draw_hex(commands: &mut Commands, hex_texture: Handle<Image>, cubic: Cubic) {
+    let pixel_position: Vec2 = cubic.to_pixel(HEX_SIZE);
     commands.spawn(SpriteBundle {
         texture: hex_texture,
         transform: Transform {
@@ -36,8 +43,3 @@ fn draw_hex(commands: &mut Commands, hex_texture: Handle<Image>, axial_position:
     });
 }
 
-fn axial_to_pixel(axial: &AxialCoordinate) -> Vec2 {
-    let x = HEX_SIZE * (3./2. * axial.q);
-    let y = -1. * HEX_SIZE * (f32::sqrt(3.)/2. * axial.q + f32::sqrt(3.) * axial.r);
-    return Vec2 { x, y };
-}
