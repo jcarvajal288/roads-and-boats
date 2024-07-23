@@ -3,20 +3,32 @@ use bevy::prelude::{Image, Res, ResMut, Resource};
 
 #[derive(Resource)]
 pub struct Images {
-    pub grass: Handle<Image>,
-    pub water: Handle<Image>,
+    pub woods: Handle<Image>,
+    pub pasture: Handle<Image>,
+    pub rock: Handle<Image>,
+    pub mountains: Handle<Image>,
+    pub desert: Handle<Image>,
+    pub sea: Handle<Image>,
 }
 
 impl Default for Images {
     fn default() -> Self {
         Self {
-            grass: Handle::default(),
-            water: Handle::default(),
+            woods: Handle::default(),
+            pasture: Handle::default(),
+            rock: Handle::default(),
+            mountains: Handle::default(),
+            desert: Handle::default(),
+            sea: Handle::default(),
         }
     }
 }
 
 pub fn load_images(mut images: ResMut<Images>, asset_server: Res<AssetServer>) {
-    images.grass = asset_server.load("Clear/Clear001.png");
-    images.water = asset_server.load("Water/Water001.png");
+    images.woods = asset_server.load("images/Woods/Woods001.png");
+    images.pasture = asset_server.load("images/Clear/Clear001.png");
+    images.rock = asset_server.load("images/Rough/Rough001.png");
+    images.mountains = asset_server.load("images/TanMountains/TanMountains001.png");
+    images.desert = asset_server.load("images/Desert/Desert001.png");
+    images.sea = asset_server.load("images/Water/Water001.png");
 }

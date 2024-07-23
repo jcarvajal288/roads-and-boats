@@ -1,16 +1,22 @@
+use std::fs::read_to_string;
+use std::io::BufRead;
+
 use bevy::asset::Handle;
 use bevy::prelude::{Commands, default, Image, Res, SpriteBundle, Transform, Vec2};
 use bevy::utils::HashMap;
 
 use crate::cubic::{create_axial, Cubic};
-use crate::hex_map::Terrain::{GRASS, WATER};
 use crate::images::Images;
 
 const HEX_SIZE: f32 = 64.;
 
 pub enum Terrain {
-    GRASS,
-    WATER,
+    WOODS,
+    PASTURE,
+    ROCK,
+    MOUNTAINS,
+    DESERT,
+    SEA
 }
 
 pub struct HexMap {
@@ -23,6 +29,23 @@ impl HexMap {
             draw_hex(&mut commands, hex, images);
         }
     }
+
+}
+
+pub fn read_map_from_file(map_filename: &str) -> HexMap {
+    let mut new_map = HashMap::new();
+    for line in read_to_string(map_filename).unwrap().lines() {
+        if line.is_empty() {
+            continue;
+        }
+        let split_line: Vec<&str> = line.split(':').collect();  
+        let terrain_type = parse_terrain_type(split_line[1]);
+        let coords: Vec<&str> = split_line[0].split(',').collect();
+        let q = coords[0].parse::<i16>().unwrap();
+        let r = coords[1].parse::<i16>().unwrap();
+        new_map.insert(create_axial([q, r]), terrain_type);
+    }
+    return HexMap { map: new_map };
 }
 
 pub fn create_hex_map(left: i16, right: i16, top: i16, bottom: i16) -> HexMap {
@@ -30,11 +53,23 @@ pub fn create_hex_map(left: i16, right: i16, top: i16, bottom: i16) -> HexMap {
     for q in left..=right {
         let q_offset = q >> 1;
         for r in (top - q_offset)..=(bottom - q_offset) {
-            let terrain = if (q + r % 2 == 0) { GRASS } else { WATER };
+            let terrain = if (q + r % 2 == 0) { Terrain::PASTURE } else { Terrain::SEA };
             new_map.insert(create_axial([q, r]), terrain);
         }
     }
-    return HexMap { map: new_map }
+    return HexMap { map: new_map };
+}
+
+fn parse_terrain_type(terrain_code: &str) -> Terrain {
+    return match terrain_code {
+        "W" => Terrain::WOODS,
+        "P" => Terrain::PASTURE,
+        "R" => Terrain::ROCK,
+        "M" => Terrain::MOUNTAINS,
+        "D" => Terrain::DESERT,
+        "S" => Terrain::SEA,
+        _ => Terrain::SEA
+    }
 }
 
 fn draw_hex(commands: &mut Commands, hex: (&Cubic, &Terrain), images: &Res<Images>) {
@@ -52,7 +87,11 @@ fn draw_hex(commands: &mut Commands, hex: (&Cubic, &Terrain), images: &Res<Image
 
 fn get_image(terrain: &Terrain, images: &Res<Images>) -> Handle<Image> {
     return match terrain {
-        GRASS => images.grass.clone(),
-        WATER => images.water.clone()
+        Terrain::WOODS => images.woods.clone(),
+        Terrain::PASTURE => images.pasture.clone(),
+        Terrain::ROCK => images.rock.clone(),
+        Terrain::MOUNTAINS => images.mountains.clone(),
+        Terrain::DESERT => images.desert.clone(),
+        Terrain::SEA => images.sea.clone(),
     }
 }
