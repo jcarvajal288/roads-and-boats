@@ -9,6 +9,7 @@ pub struct Images {
     pub mountains: Handle<Image>,
     pub desert: Handle<Image>,
     pub sea: Handle<Image>,
+    pub city: Handle<Image>,
 }
 
 impl Default for Images {
@@ -20,6 +21,7 @@ impl Default for Images {
             mountains: Handle::default(),
             desert: Handle::default(),
             sea: Handle::default(),
+            city: Handle::default(),
         }
     }
 }
@@ -31,4 +33,5 @@ pub fn load_images(mut images: ResMut<Images>, asset_server: Res<AssetServer>) {
     images.mountains = asset_server.load("images/TanMountains/TanMountains001.png");
     images.desert = asset_server.load("images/Desert/Desert001.png");
     images.sea = asset_server.load("images/Water/Water001.png");
+    images.city = asset_server.load("images/City/City001.png");
 }

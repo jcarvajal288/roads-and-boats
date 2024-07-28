@@ -16,7 +16,8 @@ pub enum Terrain {
     ROCK,
     MOUNTAINS,
     DESERT,
-    SEA
+    SEA,
+    CITY
 }
 
 pub struct HexMap {
@@ -68,6 +69,7 @@ fn parse_terrain_type(terrain_code: &str) -> Terrain {
         "M" => Terrain::MOUNTAINS,
         "D" => Terrain::DESERT,
         "S" => Terrain::SEA,
+        "C" => Terrain::CITY,
         _ => Terrain::SEA
     }
 }
@@ -93,5 +95,6 @@ fn get_image(terrain: &Terrain, images: &Res<Images>) -> Handle<Image> {
         Terrain::MOUNTAINS => images.mountains.clone(),
         Terrain::DESERT => images.desert.clone(),
         Terrain::SEA => images.sea.clone(),
+        Terrain::CITY => images.city.clone(),
     }
 }
