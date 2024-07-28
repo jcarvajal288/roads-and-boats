@@ -1,11 +1,12 @@
 use bevy::prelude::*;
 
-use crate::hex_map::{create_hex_map, HexMap, read_map_from_file};
+use crate::hex_map::{HexMap, read_map_from_file};
 use crate::images::{Images, load_images};
 
 mod cubic;
 mod hex_map;
 mod images;
+mod hex;
 
 fn main() {
     App::new()
