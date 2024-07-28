@@ -1,5 +1,4 @@
 use std::fs::read_to_string;
-use std::io::BufRead;
 
 use bevy::asset::Handle;
 use bevy::prelude::{Commands, default, Image, Res, SpriteBundle, Transform, Vec2};
@@ -9,6 +8,7 @@ use crate::cubic::{create_axial, Cubic};
 use crate::images::Images;
 
 const HEX_SIZE: f32 = 64.;
+const HEX_SCALE: f32 = 0.25;
 
 pub enum Terrain {
     WOODS,
@@ -78,7 +78,7 @@ fn draw_hex(commands: &mut Commands, hex: (&Cubic, &Terrain), images: &Res<Image
         texture: get_image(hex.1, images),
         transform: Transform {
             translation: (pixel_position, 0.).into(),
-            scale: (0.25, 0.25, 0.25).into(),
+            scale: (HEX_SCALE, HEX_SCALE, HEX_SCALE).into(),
             ..default()
         },
         ..default()
