@@ -15,10 +15,6 @@ impl Cubic {
         return self.coords[1];
     }
 
-    pub fn s(&self) -> i16 {
-        return self.coords[2];
-    }
-
     pub fn to_pixel(&self, hs: f32) -> Vec2 {
         let hex_size = hs - 1.; // avoid 1 pixel space between hexes
         let q = f32::from(self.q());

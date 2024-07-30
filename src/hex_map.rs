@@ -1,12 +1,11 @@
 use std::fs::read_to_string;
-use rand::Rng;
 
 use bevy::asset::Handle;
-use bevy::log::info;
-use bevy::prelude::{Commands, default, Image, Res, SpriteBundle, Transform, Vec2};
+use bevy::prelude::{Commands, default, Image, Res, ResMut, Resource, SpriteBundle, Transform, Vec2};
 use bevy::utils::HashMap;
+use rand::Rng;
 
-use crate::cubic::{create_axial, Cubic, cubic_from_pixel};
+use crate::cubic::{create_axial, Cubic};
 use crate::hex::Hex;
 use crate::images::Images;
 
@@ -23,8 +22,17 @@ pub enum Terrain {
     CITY
 }
 
+#[derive(Resource)]
 pub struct HexMap {
     pub map: HashMap<Cubic, Hex>
+}
+
+impl Default for HexMap {
+    fn default() -> Self {
+        Self {
+            map: HashMap::new()
+        }
+    }
 }
 
 impl HexMap {
@@ -33,7 +41,10 @@ impl HexMap {
             draw_hex(&mut commands, hex, images);
         }
     }
+}
 
+pub fn set_hex_map(mut hex_map: ResMut<HexMap>) {
+    hex_map.map = read_map_from_file("assets/maps/antiquityMap1.txt").map;
 }
 
 pub fn read_map_from_file(map_filename: &str) -> HexMap {
@@ -53,11 +64,6 @@ pub fn read_map_from_file(map_filename: &str) -> HexMap {
         new_map.insert(create_axial([q, r]), hex);
     }
     return HexMap { map: new_map };
-}
-
-pub fn handle_left_click(mouse_position: Vec2) {
-    let clicked_cubic_position = cubic_from_pixel(mouse_position);
-    info!("[{},{}]", clicked_cubic_position.q(), clicked_cubic_position.r());
 }
 
 fn parse_terrain_type(terrain_code: &str) -> Terrain {
