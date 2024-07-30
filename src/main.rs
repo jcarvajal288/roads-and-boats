@@ -2,17 +2,20 @@ use bevy::prelude::*;
 
 use crate::hex_map::{HexMap, read_map_from_file};
 use crate::images::{Images, load_images};
+use crate::mouse::handle_mouse;
 
 mod cubic;
 mod hex_map;
 mod images;
 mod hex;
+mod mouse;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .insert_resource(Images::default())
         .add_systems(Startup, (load_images, setup).chain())
+        .add_systems(Update, handle_mouse)
         .run();
 }
 
