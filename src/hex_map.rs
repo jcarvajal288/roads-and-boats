@@ -2,14 +2,15 @@ use std::fs::read_to_string;
 use rand::Rng;
 
 use bevy::asset::Handle;
+use bevy::log::info;
 use bevy::prelude::{Commands, default, Image, Res, SpriteBundle, Transform, Vec2};
 use bevy::utils::HashMap;
 
-use crate::cubic::{create_axial, Cubic};
+use crate::cubic::{create_axial, Cubic, cubic_from_pixel};
 use crate::hex::Hex;
 use crate::images::Images;
 
-const HEX_SIZE: f32 = 64.;
+pub const HEX_SIZE: f32 = 64.;
 const HEX_SCALE: f32 = 0.25;
 
 pub enum Terrain {
@@ -52,6 +53,11 @@ pub fn read_map_from_file(map_filename: &str) -> HexMap {
         new_map.insert(create_axial([q, r]), hex);
     }
     return HexMap { map: new_map };
+}
+
+pub fn handle_left_click(mouse_position: Vec2) {
+    let clicked_cubic_position = cubic_from_pixel(mouse_position);
+    info!("[{},{}]", clicked_cubic_position.q(), clicked_cubic_position.r());
 }
 
 fn parse_terrain_type(terrain_code: &str) -> Terrain {
